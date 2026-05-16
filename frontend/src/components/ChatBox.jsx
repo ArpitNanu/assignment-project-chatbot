@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { API_BASE_URL } from '../config';
 
 const ChatBox = ({ documentId, token }) => {
   const [messages, setMessages] = useState([]);
@@ -16,7 +17,7 @@ const ChatBox = ({ documentId, token }) => {
     setIsLoading(true);
 
     try {
-      const response = await fetch('http://localhost:5000/api/chat', {
+      const response = await fetch(`${API_BASE_URL}/api/chat`, {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',
