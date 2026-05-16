@@ -2,10 +2,11 @@ import express from "express";
 import pdf from "pdf-parse";
 import upload from "../middleware/uploadMiddleware.js";
 import Document from "../models/Document.js";
+import { protect } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
-router.post("/upload", upload.single("file"), async (req, res) => {
+router.post("/upload", protect, upload.single("file"), async (req, res) => {
   try {
     if (!req.file) {
       return res.status(400).json({ message: "No file uploaded" });
@@ -23,6 +24,7 @@ router.post("/upload", upload.single("file"), async (req, res) => {
     }
 
     const newDoc = new Document({
+      userId: req.user._id,
       fileName: req.file.originalname,
       content: extractedText,
     });
