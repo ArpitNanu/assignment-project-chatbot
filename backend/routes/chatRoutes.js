@@ -10,7 +10,7 @@ dotenv.config();
 const router = express.Router();
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+const model = genAI.getGenerativeModel({ model: "gemini-3.1-flash-lite" }, { apiVersion: "v1" });
 
 // @desc    Get chat history for the logged in user
 // @route   GET /api/chat/history
@@ -38,15 +38,28 @@ router.post("/", protect, async (req, res) => {
       return res.status(404).json({ message: "Document not found." });
     }
 
+    console.log(`Sending prompt to AI for document: ${document.fileName} (Content length: ${document.content?.length || 0})`);
+
     const prompt = `
-      You are an assistant that answers questions based ONLY on the provided document content.
-      If the answer is not in the document, say "I'm sorry, I couldn't find that information in the document."
+      You are a professional Document Assistant. Your task is to help the user understand the content of the provided document.
       
-      Document Content:
+      CONTEXT:
+      - Document Title: ${document.fileName}
+      - Document Type: ${document.fileType}
+      
+      DOCUMENT CONTENT:
+      ---
       ${document.content}
+      ---
       
-      User Question:
+      USER QUESTION:
       ${question}
+      
+      INSTRUCTIONS:
+      1. Answer the question thoroughly based on the DOCUMENT CONTENT provided above.
+      2. If the answer is partially available, provide the available details.
+      3. If the answer is absolutely not in the document, politely say: "I'm sorry, I couldn't find that specific information in the document, but I can help you with other parts of it."
+      4. Maintain a helpful and professional tone.
     `;
 
     const result = await model.generateContent(prompt);
@@ -67,7 +80,10 @@ router.post("/", protect, async (req, res) => {
     });
   } catch (error) {
     console.error("AI Chat Error:", error);
-    res.status(500).json({ message: "Error communicating with AI" });
+    res.status(500).json({ 
+      message: "Error communicating with AI",
+      error: error.message 
+    });
   }
 });
 
