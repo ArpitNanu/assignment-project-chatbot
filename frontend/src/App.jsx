@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Routes, Route, Navigate, useNavigate } from 'react-router-dom'
 import LoginPage from './pages/LoginPage'
+import SignupPage from './pages/SignupPage'
 import UploadPage from './pages/UploadPage'
 import ChatPage from './pages/ChatPage'
 import Header from './components/Header'
@@ -50,7 +51,6 @@ function App() {
   return (
     <div className="max-w-3xl mx-auto p-4 font-sans text-gray-800"> 
       {token && <Header onLogout={handleLogout} />} 
-      DRY principle 
 
       <main>
         <Routes>
@@ -58,6 +58,10 @@ function App() {
           
           <Route path="/login" element={
             token ? <Navigate to="/upload" replace /> : <LoginPage onLoginSuccess={handleLoginSuccess} />
+          } />
+
+          <Route path="/signup" element={
+            token ? <Navigate to="/upload" replace /> : <SignupPage onLoginSuccess={handleLoginSuccess} />
           } />
           
           <Route path="/upload" element={
@@ -81,6 +85,7 @@ function App() {
     </div>
   )
 }
+
 
 export default App
 

@@ -1,10 +1,10 @@
 import React from 'react'
-import Auth from '../components/Auth'
+import Login from '../components/Login'
 
 const LoginPage = ({ onLoginSuccess }) => {
   return (
     <div className="mt-12">
-      <Auth onLoginSuccess={onLoginSuccess} />
+      <Login onLoginSuccess={onLoginSuccess} />
     </div>
   )
 }
